@@ -9,10 +9,10 @@ var dsp = require('./dsp.js');
 
 var files = glob.readdirSync('/10*.csv');
 
-// //raw data plot
-//  for(file in files){
-//       plot(files[file]);
-//  }   
+//raw data plot
+ for(file in files){
+      plot(files[file]);
+ }   
 
 
 
@@ -80,7 +80,18 @@ for (file in files) {
     });
     fs.writeFileSync(`raw4_${files[file]}.csv`, raw4.join(''), 'utf-8');
     
-    plot(`smooth_${files[file]}.csv`);
-    plot(`raw4_${files[file]}.csv`);
-    
+  //   plot(`smooth_${files[file]}.csv`);
+  //   plot(`raw4_${files[file]}.csv`);
+
+    let mean =  M.reduce((a,b) => a+b,0)/M.length;
+    let steps = M.map((val,index,arr) => {
+         let ts = new Date(Date.parse(raw4[index].split(',')[0])).toISOString();
+         ts = ts.substring(0, ts.length - 1).replace("T"," ");
+         let step = (val > mean) ? 2:0;
+           return(`"${ts}",${val},${step}\n`);
+    });
+    fs.writeFileSync(`steps.csv`, steps.join(''), 'utf-8');
+    // plot('steps.csv');
+    break;
+
 }
