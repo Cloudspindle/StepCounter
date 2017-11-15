@@ -1,0 +1,18 @@
+{
+  "name": "stepcounter",
+  "version": "1.0.0",
+  "description": "Count steps from Accelerometer and/or Gyro samples",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "George Redinger",
+  "license": "ISC",
+  "dependencies": {
+    "glob-fs": "^0.1.7",
+    "gnuplot": "^0.3.1",
+    "readline": "^1.3.0",
+    "sleep": "^5.1.1"
+  }
+}
