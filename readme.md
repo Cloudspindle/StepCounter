@@ -11,7 +11,7 @@
 * Install nodejs: https://nodejs.org
 * Install gnuplot: http://www.gnuplot.info/
 * run "npm install"
-* run npm start at the command line
+* run "npm start"
 
  
 ## only tested under Ubuntu Linux 17.04
