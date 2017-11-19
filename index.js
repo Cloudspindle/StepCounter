@@ -25,7 +25,6 @@ var files = glob.readdirSync('/10*.csv');
 
 
 for (file in files) {
-    console.log(files[file]);
     var X = [],
         Y = [],
         Z = [],
@@ -90,18 +89,25 @@ for (file in files) {
 
 
     let mean =  M.reduce((a,b) => a+b,0)/M.length;
+    var lastStep = 0;
+    var stepCount = 0;
     let steps = M.map((val,index,arr) => {
          let ts = new Date(Date.parse(raw4[index].split(',')[0])).toISOString();
          ts = ts.substring(0, ts.length - 1).replace("T"," ");
          let step = (val > mean) ? 2:0;
+           if((lastStep == 0) && step == 2 ){
+              stepCount ++;
+           }
+           lastStep = step;
            return(`"${ts}",${val},${step}\n`);
     });
     fs.writeFileSync(`steps.csv`, steps.join(''), 'utf-8');
+    console.log(files[file],stepCount);
+    
 
 
+    //  plot('steps.csv');
 
-     plot('steps.csv');
-
-    break;
+    // break;
 
 }
