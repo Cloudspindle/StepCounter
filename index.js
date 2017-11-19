@@ -84,8 +84,10 @@ for (file in files) {
     });
     fs.writeFileSync(`raw4_${files[file]}.csv`, raw4.join(''), 'utf-8');
     
+
     // plot(`smooth_${files[file]}.csv`);
    // plot(`raw4_${files[file]}.csv`);
+
 
     let mean =  M.reduce((a,b) => a+b,0)/M.length;
     let steps = M.map((val,index,arr) => {
@@ -95,8 +97,10 @@ for (file in files) {
            return(`"${ts}",${val},${step}\n`);
     });
     fs.writeFileSync(`steps.csv`, steps.join(''), 'utf-8');
-    plot('steps.csv');
 
+
+
+     plot('steps.csv');
 
     break;
 
