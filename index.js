@@ -6,13 +6,13 @@ var sleep = require('sleep');
 var plot = require('./plot.js');
 var deltat = require('./deltat.js');
 var dsp = require('./dsp.js');
-
+var normalize = require('./normalize.js');
 var files = glob.readdirSync('/10*.csv');
 
-//raw data plot
- for(file in files){
-      plot(files[file]);
- }   
+// //raw data plot
+//  for(file in files){
+//       plot(files[file]);
+//  }   
 
 
 
@@ -47,6 +47,10 @@ for (file in files) {
     }
 
     var filter = new dsp.IIRFilter(dsp.LP12, 3,3, 100);
+    X=normalize.normalize(X);
+    Y=normalize.normalize(Y);
+    Z=normalize.normalize(Z);
+    M=normalize.normalize(M);
     
     filter.process(X);
     filter.process(Y);
@@ -80,8 +84,8 @@ for (file in files) {
     });
     fs.writeFileSync(`raw4_${files[file]}.csv`, raw4.join(''), 'utf-8');
     
-  //   plot(`smooth_${files[file]}.csv`);
-  //   plot(`raw4_${files[file]}.csv`);
+    // plot(`smooth_${files[file]}.csv`);
+   // plot(`raw4_${files[file]}.csv`);
 
     let mean =  M.reduce((a,b) => a+b,0)/M.length;
     let steps = M.map((val,index,arr) => {
@@ -91,7 +95,9 @@ for (file in files) {
            return(`"${ts}",${val},${step}\n`);
     });
     fs.writeFileSync(`steps.csv`, steps.join(''), 'utf-8');
-    // plot('steps.csv');
+    plot('steps.csv');
+
+
     break;
 
 }
