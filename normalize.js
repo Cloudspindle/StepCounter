@@ -25,9 +25,10 @@ function average(data) {
 function normalize(values) {
     let ave = average(values);
     let stdev = standardDeviation(values);
+    stdev = (stdev === 0) ? 1.0:stdev; 
     let normalized = values.map(function (val, index, values) {
         return ((val - ave) / stdev);
-    });
+      });
     return normalized;
 }
 

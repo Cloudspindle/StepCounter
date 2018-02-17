@@ -4,7 +4,7 @@
   "description": "Count steps from Accelerometer and/or Gyro samples",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "start": "node index.js"
   },
   "author": "George Redinger",
@@ -14,5 +14,8 @@
     "gnuplot": "^0.3.1",
     "readline": "^1.3.0",
     "sleep": "^5.1.1"
+  },
+  "devDependencies": {
+    "jest": "^21.2.1"
   }
 }
