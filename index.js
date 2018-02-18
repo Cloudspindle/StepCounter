@@ -13,12 +13,6 @@ var smoother = require('./smooth.js');
 var normalize = require('./normalize.js');
 var files = glob.readdirSync('/10*.csv');
 
-// //raw data plot
-//  for(file in files){
-//       plot(files[file]);
-//  }   
-
-
 
 // // jitter plot
 // var intervals = deltat(files[0]);
@@ -50,15 +44,17 @@ for (let file in files) {
     }
     //incremental step counter;
     let steps = [];
+    const weightDC = .99;
+    const weightEnv = .01;
+
     let incremental = highpassfilter.hpf(0, 0.3, 0);
-    const weightDC = .9;
-    const weightEnv = .1;
-    let envelope = highpassfilter.envelope(0, weightDC, weightEnv);
+    let envelope = highpassfilter.envelope(1, weightDC, weightEnv);
     let smooth = smoother.smooth(1, 8);
     let fastAvg = smoother.expAvg(1, 0.5);
     let slowAvg = smoother.expAvg(1, 0.125);
     let fastSinc = sinc.sincFilter(8,1);
     let slowSinc = sinc.sincFilter(32,1);
+
     let last = 0;
     let step = 1;
     let mean = 0;
@@ -68,13 +64,14 @@ for (let file in files) {
     for (let magnatude in M) {
         let highpass = incremental.next(M[magnatude]);
         let smoothed = smooth.next(highpass.value);
-        let env = envelope.next(M[magnatude]);
-        let envThreshold = env.value / 4.0;
-        let threshold = envThreshold > 0.2 ? envThreshold : 0.2;
         let fast = fastAvg.next(M[magnatude]).value;
         let slow = slowAvg.next(M[magnatude]).value;
         let sincF = fastSinc.next(M[magnatude]).value;
         let sincS = slowSinc.next(M[magnatude]).value;
+        let env = envelope.next(sincS);
+    
+        let envThreshold = env.value / 4.0;
+        let threshold = envThreshold > 0.3 ? envThreshold : 0.3;
         var difference = Math.abs(sincF - sincS);
         let isEdge = previousDifference < threshold && difference >= threshold;
         if (isEdge) {
@@ -91,72 +88,8 @@ for (let file in files) {
 
         last = smoothed.value;
         console.log(M[magnatude],smoothed.value, sincF, sincS,difference, env.value, step, stepCount);
-
     }
 
-
-    //     var filter = new dsp.IIRFilter(dsp.LP12, 3,3, 100);
-    //     X=normalize.normalize(X);
-    //     Y=normalize.normalize(Y);
-    //     Z=normalize.normalize(Z);
-    //     M=normalize.normalize(M);
-
-    //     filter.process(X);
-    //     filter.process(Y);
-    //     filter.process(Z);
-    //     filter.process(M);
-
-    //     smoothed = data.map((val, index, arr) => {
-    //         let result = [val.split(',')[0], X[index], Y[index], Z[index],M[index]];
-    //         return (result);
-    //     });
-
-    //     let cleaned = smoothed.filter(function (element, i, smoothed) {
-    //         return (!isNaN(element[1])); //don't keep NaNs
-    //     });
-
-    //     cleaned = cleaned.map((val, index, arr) => {
-    //         return (val + '\n');
-    //     });
-
-    //     fs.writeFileSync(`smooth_${files[file]}.csv`, cleaned.join(''), 'utf-8');
-
-
-    //     let raw4 = data.map((val, index, arr) => {
-    //         let x = parseFloat(val.split(',')[1], 10);
-    //         let y = parseFloat(val.split(',')[2], 10);
-    //         let z = parseFloat(val.split(',')[3], 10);
-    //         let m = Math.sqrt(x*x+y*y+z*z);
-    //         let ts = new Date(Date.parse(val.split(',')[0])).toISOString();
-    //         ts = ts.substring(0, ts.length - 1).replace("T"," ");
-    //         return (`"${ts}",${x},${y},${z},${m}\n`);
-    //     });
-    //     fs.writeFileSync(`raw4_${files[file]}.csv`, raw4.join(''), 'utf-8');
-
-
-    //     // plot(`smooth_${files[file]}.csv`);
-    //    // plot(`raw4_${files[file]}.csv`);
-
-
-    //     let mean =  M.reduce((a,b) => a+b,0)/M.length;
-    //     var lastStep = 0;
-    //     var stepCount = 0;
-    //     let steps = M.map((val,index,arr) => {
-    //          let ts = new Date(Date.parse(raw4[index].split(',')[0])).toISOString();
-    //          ts = ts.substring(0, ts.length - 1).replace("T"," ");
-    //          let step = (val > mean) ? 2:0;
-    //            if((lastStep == 0) && step == 2 ){
-    //               stepCount ++;
-    //            }
-    //            lastStep = step;
-    //            return(`"${ts}",${val},${step}\n`);
-    //     });
-    // fs.writeFileSync(`steps.csv`, steps.join('\n'), 'utf-8');
-    // // console.log(files[file],stepCount);
-
-
-
-  //      plot('steps.csv');
 
     break;
 
