@@ -52,8 +52,8 @@ for (let file in files) {
     let smooth = smoother.smooth(1, 8);
     let fastAvg = smoother.expAvg(1, 0.5);
     let slowAvg = smoother.expAvg(1, 0.125);
-    let fastSinc = sinc.sincFilter(8,1);
-    let slowSinc = sinc.sincFilter(32,1);
+    let fastSinc = sinc.sincFilter(8, 1);
+    let slowSinc = sinc.sincFilter(32, 1);
 
     let last = 0;
     let step = 1;
@@ -69,7 +69,7 @@ for (let file in files) {
         let sincF = fastSinc.next(M[magnatude]).value;
         let sincS = slowSinc.next(M[magnatude]).value;
         let env = envelope.next(sincS);
-    
+
         let envThreshold = env.value / 4.0;
         let threshold = envThreshold > 0.3 ? envThreshold : 0.3;
         var difference = Math.abs(sincF - sincS);
@@ -87,7 +87,7 @@ for (let file in files) {
         previousDifference = difference
 
         last = smoothed.value;
-        console.log(M[magnatude],smoothed.value, sincF, sincS,difference, env.value, step, stepCount);
+        console.log(M[magnatude], smoothed.value, sincF, sincS, difference, env.value, step, stepCount);
     }
 
 
